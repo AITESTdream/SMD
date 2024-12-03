@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Need Some Motivation</title>
+    <style>
+        body {
+            background-color: #f5f1ec;
+            margin: 0;
+            padding: 20px;
+            font-family: 'SF Pro Display', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 600px;
+            background: linear-gradient(145deg, #ffffff, #e8e3dd);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        h1 {
+            color: #4a3f35;
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .chat-history {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f0ebe6;
+            border-radius: 10px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .user-message {
+            background: #c0a080;
+            color: white;
+            text-align: right;
+        }
+
+        .ai-message {
+            background: #ffffff;
+            color: #4a3f35;
+            text-align: left;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            background: #ffffff;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+            color: #4a3f35;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #a88860;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            box-shadow: 0 2px 10px rgba(168,136,96,0.3);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(168,136,96,0.4);
+        }
+
+        .back-button {
+            background: linear-gradient(145deg, #f5f0ec, #e8d5c4);
+            color: #8b7355;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 
+                0 3px 10px rgba(168, 136, 96, 0.15),
+                inset 0 -1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin: 20px;
+        }
+
+        .back-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 
+                0 5px 15px rgba(168, 136, 96, 0.2),
+                inset 0 -1px 3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Need Some Motivation</h1>
+        <div class="chat-history" id="chatHistory"></div>
+        <div class="input-container">
+            <input type="text" id="questionInput" placeholder="Ask for advice..." required>
+            <button onclick="sendQuestion()">Send</button>
+        </div>
+        <button class="back-button" onclick="location.href='/'">Back to Home</button>
+    </div>
+
+    <script>
+        async function sendQuestion() {
+            const input = document.getElementById('questionInput');
+            const question = input.value.trim();
+            if (!question) return;
+
+            // Add user question to chat
+            const chatHistory = document.getElementById('chatHistory');
+            chatHistory.innerHTML += `
+                <div class="message user-message">
+                    ${question}
+                </div>
+            `;
+            input.value = '';
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            // Send question to server
+            const response = await fetch('/need_motivation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `question=${encodeURIComponent(question)}`
+            });
+
+            const data = await response.json();
+
+            // Add AI response to chat
+            chatHistory.innerHTML += `
+                <div class="message ai-message">
+                    ${data.response || data.error}
+                </div>
+            `;
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+    </script>
+</body>
+</html> 
